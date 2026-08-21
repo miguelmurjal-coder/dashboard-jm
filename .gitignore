@@ -14,3 +14,6 @@ Thumbs.db
 
 # Pasta temporária criada pelo workflow de publicação.
 neocities-dist/
+
+# Estado e registos da atualização automática local.
+.automation/
