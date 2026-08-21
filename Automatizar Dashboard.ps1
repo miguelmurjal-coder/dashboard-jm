@@ -5,8 +5,18 @@ $stateDir = Join-Path $repo '.automation'
 $logFile = Join-Path $stateDir 'atualizacoes.log'
 $lockFile = Join-Path $stateDir 'atualizacao.lock'
 $gitSafeDirectory = $repo.Replace('\', '/')
+$gitCommand = Get-Command git -ErrorAction SilentlyContinue
+$gitExecutable = if ($gitCommand) {
+    $gitCommand.Source
+} else {
+    Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd\git.exe'
+}
 
 New-Item -ItemType Directory -Path $stateDir -Force | Out-Null
+
+if (-not (Test-Path -LiteralPath $gitExecutable)) {
+    throw "Git não foi encontrado em $gitExecutable."
+}
 
 function Write-UpdateLog {
     param([string]$Message)
@@ -46,7 +56,7 @@ try {
     }
 
     $gitBase = @('-c', "safe.directory=$gitSafeDirectory")
-    & git @gitBase diff --quiet -- index.html
+    & $gitExecutable @gitBase diff --quiet -- index.html
     $diffExitCode = $LASTEXITCODE
 
     if ($diffExitCode -eq 0) {
@@ -57,14 +67,14 @@ try {
         throw "Não foi possível verificar as alterações do Git (código $diffExitCode)."
     }
 
-    & git @gitBase add -- index.html
+    & $gitExecutable @gitBase add -- index.html
     if ($LASTEXITCODE -ne 0) { throw 'Falha ao preparar index.html para commit.' }
 
     $commitMessage = 'Atualizar dashboard ' + (Get-Date -Format 'yyyy-MM-dd HH:mm')
-    & git @gitBase commit -m $commitMessage
+    & $gitExecutable @gitBase commit -m $commitMessage
     if ($LASTEXITCODE -ne 0) { throw 'Falha ao criar o commit automático.' }
 
-    & git @gitBase push origin main
+    & $gitExecutable @gitBase push origin main
     if ($LASTEXITCODE -ne 0) { throw 'Falha ao enviar a atualização para o GitHub.' }
 
     Write-UpdateLog 'Atualização enviada; publicação no Neocities iniciada.'
