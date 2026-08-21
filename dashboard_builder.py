@@ -15,7 +15,7 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 
-VERSION = "1.7.1"
+VERSION = "1.7.2"
 VACATION_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXk2yWBJ5SFJUPhJG7oBWhqs5tJylVsDWBl6GGndu2oWrwti6e6csHZpmxaJG9ywzStdmR0_4Q2URX/pub?gid=1810617663&single=true&output=csv"
 DEFAULT_SOURCE = Path(r"C:\Users\pke\Desktop\JM_NZ_2023\INDICADORES OPERACIONAIS\OM2026\GESTÃO\INDICADOR MASTER 2026.xlsx")
 HERE = Path(__file__).resolve().parent
@@ -349,9 +349,19 @@ def build(source):
     except Exception as exc:
         print(f"Aviso: plano de férias não atualizado ({exc}); foram mantidos os últimos dados.")
     html = re.sub(r"<title>.*?</title>", f"<title>PKE Automotive Dashboard v{VERSION}</title>", html, count=1)
-    stamp = datetime.now().strftime("%d/%m/%Y %H:%M")
-    html = html.replace("document.getElementById('today').textContent=new Intl.DateTimeFormat('pt-PT',{day:'2-digit',month:'short',year:'numeric'}).format(new Date());",
-        "document.getElementById('today').textContent=new Intl.DateTimeFormat('pt-PT',{day:'2-digit',month:'short',year:'numeric'}).format(new Date())+' · Dados: " + stamp + "';")
+    stamp = datetime.now().astimezone().strftime("%d/%m/%Y às %H:%M")
+    update_marker = (
+        "document.getElementById('today').innerHTML="
+        "'<span>Dados atualizados</span><strong>" + stamp + "</strong>';"
+    )
+    html, marker_count = re.subn(
+        r"document\.getElementById\('today'\)[^\n]*",
+        update_marker,
+        html,
+        count=1,
+    )
+    if marker_count != 1:
+        raise RuntimeError("Não foi possível atualizar o marcador de data do dashboard.")
     temp = OUTPUT.with_suffix(".novo.html")
     temp.write_text(html, encoding="utf-8")
     temp.replace(OUTPUT)

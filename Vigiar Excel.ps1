@@ -16,8 +16,13 @@ New-Item -ItemType Directory -Path $stateDir -Force | Out-Null
 
 function Write-WatcherLog {
     param([string]$Message)
+    if ((Test-Path -LiteralPath $logFile) -and (Get-Item -LiteralPath $logFile).Length -ge 1MB) {
+        $archiveLog = Join-Path $stateDir 'vigilancia.anterior.log'
+        Move-Item -LiteralPath $logFile -Destination $archiveLog -Force
+    }
     $timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-    Add-Content -LiteralPath $logFile -Value "[$timestamp] $Message" -Encoding UTF8
+    $line = "[$timestamp] $Message$([Environment]::NewLine)"
+    [System.IO.File]::AppendAllText($logFile, $line, [System.Text.UTF8Encoding]::new($false))
 }
 
 if (-not (Test-Path -LiteralPath $sourcePath -PathType Leaf)) {
