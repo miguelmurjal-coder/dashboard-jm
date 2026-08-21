@@ -1,0 +1,17 @@
+PKE AUTOMOTIVE DASHBOARD · VERSÃO ATIVA
+================================
+
+FONTE OFICIAL
+C:\Users\pke\Desktop\JM_NZ_2023\INDICADORES OPERACIONAIS\OM2026\GESTÃO\INDICADOR MASTER 2026.xlsx
+
+COMO ATUALIZAR
+1. Grave e feche o ficheiro INDICADOR MASTER 2026.xlsx.
+2. Faça duplo clique em "Atualizar Dashboard.cmd".
+3. Aguarde pela mensagem de sucesso.
+4. Abra index.html.
+
+O atualizador cria index.anterior.html antes de substituir o dashboard.
+Se houver um erro de leitura ou validação, o dashboard anterior é mantido.
+
+IMPORTANTE
+O dashboard contém dados pessoais e financeiros. Deve ser tratado como ficheiro interno.

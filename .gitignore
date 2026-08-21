@@ -1,0 +1,16 @@
+# Livros e cópias de trabalho nunca entram no repositório.
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+index.anterior.html
+*.zip
+
+# Ficheiros locais do Python e do Windows.
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
+
+# Pasta temporária criada pelo workflow de publicação.
+neocities-dist/
