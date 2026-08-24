@@ -3,7 +3,7 @@
 <html lang="pt-PT">
 <head>
 <meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>PKE Automotive Dashboard v1.9.0</title>
+<title>PKE Automotive Dashboard v1.9.1</title>
 <style>
 :root{--bg:#050910;--panel:rgba(8,18,28,.80);--panel2:rgba(10,25,38,.88);--line:rgba(70,210,255,.18);--cyan:#47d7ff;--orange:#ff8a35;--text:#eff8ff;--muted:#8ea8b7;--green:#56e0a0;--red:#ff6a76}
 *{box-sizing:border-box}body{margin:0;background:#050910;color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif;min-height:100vh;overflow-x:hidden}
@@ -320,7 +320,7 @@ const shortDate=s=>new Intl.DateTimeFormat('pt-PT',{day:'2-digit',month:'short'}
 const monthOf=s=>Number(s.slice(5,7)); const sum=(a,k)=>a.reduce((t,x)=>t+(+x[k]||0),0);
 const monthlyInvoices=Array.from({length:7},(_,i)=>DB.invoices.filter(x=>monthOf(x.date)===i+1));
 const monthlyTotals=OVERVIEW_SOURCE.monthlyNet; const monthlyGross=OVERVIEW_SOURCE.monthlyGross; const totalAll=monthlyTotals.reduce((a,b)=>a+b,0); const maxMonth=Math.max(1,...monthlyTotals,...monthlyGross);
-document.getElementById('today').innerHTML='<span>Dados atualizados</span><strong>24/08/2026 às 15:48</strong>';
+document.getElementById('today').innerHTML='<span>Dados atualizados</span><strong>24/08/2026 às 15:51</strong>';
 
 const totalGross=monthlyGross.reduce((a,b)=>a+b,0);
 const totalNCNet=sum(DB.credits,'net'), totalNCGross=sum(DB.credits,'total');
@@ -356,7 +356,7 @@ function renderFapSubstitution(){
  const W=Math.max(760,rows.length*126),H=390,p={l:82,r:42,t:62,b:66},maxMoney=Math.max(1,...rows.flatMap(x=>[x.kept,x.returned]))*1.2,maxQty=Math.max(1,...rows.map(x=>x.qty)),iw=W-p.l-p.r,ih=H-p.t-p.b,step=iw/rows.length,bw=Math.min(38,step*.28),y=v=>H-p.b-v/maxMoney*ih,yq=v=>H-p.b-v/maxQty*ih;
  let s=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"><defs><filter id="fapBarGlow" x="-40%" y="-30%" width="180%" height="170%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
  for(let i=0;i<=4;i++){const gy=p.t+ih*i/4,value=maxMoney*(1-i/4);s+=`<line x1="${p.l}" y1="${gy}" x2="${W-p.r}" y2="${gy}" stroke="rgba(130,180,205,.14)"/><text x="${p.l-10}" y="${gy+4}" text-anchor="end" class="axis-label">${svgMoney(value)}</text><text x="${W-p.r+9}" y="${gy+4}" class="axis-label">${Math.round(maxQty*(1-i/4))}</text>`}
- rows.forEach((r,i)=>{const x=p.l+step*i+step/2,keptH=Math.max(2,H-p.b-y(r.kept)),returnedH=Math.max(2,H-p.b-y(r.returned)),qtyY=yq(r.qty);s+=`<g><title>${MONTHS[i]} · ${Math.round(r.qty)} substituições · Ficou ${fmtEuroExact(r.kept)} sem IVA · NC ${fmtEuroExact(r.returned)}</title><rect x="${x-bw-4}" y="${y(r.kept)}" width="${bw}" height="${keptH}" rx="4" fill="#347bd8" filter="url(#fapBarGlow)"/><rect x="${x+4}" y="${y(r.returned)}" width="${bw}" height="${returnedH}" rx="4" fill="#ef3f4f" filter="url(#fapBarGlow)"/><text x="${x-bw/2-4}" y="${Math.max(22,y(r.kept)-8)}" text-anchor="middle" class="fap-sub-value">${svgMoney(r.kept)}</text><text x="${x+bw/2+4}" y="${Math.max(38,y(r.returned)-8)}" text-anchor="middle" class="fap-sub-value">${svgMoney(r.returned)}</text><circle cx="${x}" cy="${qtyY}" r="5" fill="#63e5a7" stroke="#dfffee" stroke-width="2"/><text x="${x}" y="${Math.max(20,qtyY-11)}" text-anchor="middle" class="fap-sub-count">${Math.round(r.qty)} feitas</text><text x="${x}" y="${H-25}" text-anchor="middle" class="fap-sub-month">${MONTHS[i].slice(0,3)}</text></g>`});el.innerHTML=s+'</svg>';
+ rows.forEach((r,i)=>{const x=p.l+step*i+step/2,keptH=Math.max(2,H-p.b-y(r.kept)),returnedH=Math.max(2,H-p.b-y(r.returned)),qtyY=yq(r.qty);s+=`<g><title>${MONTHS[i]} · ${Math.round(r.qty)} substituições · Ficou ${euro(r.kept)} sem IVA · NC ${euro(r.returned)}</title><rect x="${x-bw-4}" y="${y(r.kept)}" width="${bw}" height="${keptH}" rx="4" fill="#347bd8" filter="url(#fapBarGlow)"/><rect x="${x+4}" y="${y(r.returned)}" width="${bw}" height="${returnedH}" rx="4" fill="#ef3f4f" filter="url(#fapBarGlow)"/><text x="${x-bw/2-4}" y="${Math.max(22,y(r.kept)-8)}" text-anchor="middle" class="fap-sub-value">${svgMoney(r.kept)}</text><text x="${x+bw/2+4}" y="${Math.max(38,y(r.returned)-8)}" text-anchor="middle" class="fap-sub-value">${svgMoney(r.returned)}</text><circle cx="${x}" cy="${qtyY}" r="5" fill="#63e5a7" stroke="#dfffee" stroke-width="2"/><text x="${x}" y="${Math.max(20,qtyY-11)}" text-anchor="middle" class="fap-sub-count">${Math.round(r.qty)} feitas</text><text x="${x}" y="${H-25}" text-anchor="middle" class="fap-sub-month">${MONTHS[i].slice(0,3)}</text></g>`});el.innerHTML=s+'</svg>';
 }
 function groupDaily(data,key='net'){const m=new Map();data.forEach(x=>m.set(x.date,(m.get(x.date)||0)+(+x[key]||0)));return [...m.entries()].sort((a,b)=>a[0].localeCompare(b[0]));}
 function renderDailyCurrent(){
