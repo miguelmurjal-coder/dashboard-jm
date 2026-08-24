@@ -15,7 +15,7 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 
-VERSION = "1.8.3"
+VERSION = "1.8.4"
 VACATION_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQXk2yWBJ5SFJUPhJG7oBWhqs5tJylVsDWBl6GGndu2oWrwti6e6csHZpmxaJG9ywzStdmR0_4Q2URX/pub?gid=1810617663&single=true&output=csv"
 DEFAULT_SOURCE = Path(r"C:\Users\pke\Desktop\JM_NZ_2023\INDICADORES OPERACIONAIS\OM2026\GESTÃO\INDICADOR MASTER 2026.xlsx")
 HERE = Path(__file__).resolve().parent
