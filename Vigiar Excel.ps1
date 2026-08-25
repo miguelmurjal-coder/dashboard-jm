@@ -9,6 +9,7 @@ $sourcePath = [System.IO.Path]::GetFullPath(
     (Join-Path $repo '..\..\..\INDICADOR MASTER 2026.xlsx')
 )
 $updateScript = Join-Path $repo 'Automatizar Dashboard.ps1'
+$hiddenLauncher = Join-Path $repo 'Executar PowerShell Oculto.vbs'
 $stateDir = Join-Path $repo '.automation'
 $logFile = Join-Path $stateDir 'vigilancia.log'
 
@@ -30,6 +31,9 @@ if (-not (Test-Path -LiteralPath $sourcePath -PathType Leaf)) {
 }
 if (-not (Test-Path -LiteralPath $updateScript -PathType Leaf)) {
     throw "A rotina de atualização não foi encontrada: $updateScript"
+}
+if (-not (Test-Path -LiteralPath $hiddenLauncher -PathType Leaf)) {
+    throw "O lançador invisível não foi encontrado: $hiddenLauncher"
 }
 
 if ($ValidateOnly) {
@@ -55,7 +59,7 @@ while ($true) {
         Write-WatcherLog 'Alteração detetada; a aguardar que a gravação termine.'
         Start-Sleep -Seconds 8
 
-        & powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File $updateScript
+        & wscript.exe //B //Nologo $hiddenLauncher $updateScript
         if ($LASTEXITCODE -eq 0) {
             Write-WatcherLog 'Atualização imediata concluída.'
         }
