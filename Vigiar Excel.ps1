@@ -55,7 +55,7 @@ while ($true) {
         Write-WatcherLog 'Alteração detetada; a aguardar que a gravação termine.'
         Start-Sleep -Seconds 8
 
-        & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $updateScript
+        & powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File $updateScript
         if ($LASTEXITCODE -eq 0) {
             Write-WatcherLog 'Atualização imediata concluída.'
         }
