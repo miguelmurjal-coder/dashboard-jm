@@ -319,7 +319,7 @@ const shortDate=s=>new Intl.DateTimeFormat('pt-PT',{day:'2-digit',month:'short'}
 const monthOf=s=>Number(s.slice(5,7)); const sum=(a,k)=>a.reduce((t,x)=>t+(+x[k]||0),0);
 const monthlyInvoices=Array.from({length:7},(_,i)=>DB.invoices.filter(x=>monthOf(x.date)===i+1));
 const monthlyTotals=OVERVIEW_SOURCE.monthlyNet; const monthlyGross=OVERVIEW_SOURCE.monthlyGross; const totalAll=monthlyTotals.reduce((a,b)=>a+b,0); const maxMonth=Math.max(1,...monthlyTotals,...monthlyGross);
-document.getElementById('today').innerHTML='<span>Dados atualizados</span><strong>27/08/2026 às 10:41</strong>';
+document.getElementById('today').innerHTML='<span>Dados atualizados</span><strong>27/08/2026 às 16:21</strong>';
 
 const totalGross=monthlyGross.reduce((a,b)=>a+b,0);
 const totalNCNet=sum(DB.credits,'net'), totalNCGross=sum(DB.credits,'total');
