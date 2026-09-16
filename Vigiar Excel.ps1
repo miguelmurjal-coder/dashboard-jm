@@ -59,12 +59,12 @@ while ($true) {
         Write-WatcherLog 'Alteração detetada; a aguardar que a gravação termine.'
         Start-Sleep -Seconds 8
 
-        & wscript.exe //B //Nologo $hiddenLauncher $updateScript
-        if ($LASTEXITCODE -eq 0) {
+        $updateProcess = Start-Process -FilePath 'wscript.exe' -ArgumentList @('//B', '//Nologo', ('"' + $hiddenLauncher + '"'), ('"' + $updateScript + '"')) -WindowStyle Hidden -Wait -PassThru
+        if ($updateProcess.ExitCode -eq 0) {
             Write-WatcherLog 'Atualização imediata concluída.'
         }
         else {
-            Write-WatcherLog "A atualização terminou com o código $LASTEXITCODE; a rotina de 15 minutos voltará a tentar."
+            Write-WatcherLog "A atualização terminou com o código $($updateProcess.ExitCode); a rotina de 15 minutos voltará a tentar."
         }
 
         $lastWriteTime = (Get-Item -LiteralPath $sourcePath).LastWriteTimeUtc

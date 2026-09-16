@@ -1,3 +1,5 @@
+param([switch]$Force)
+
 $ErrorActionPreference = 'Stop'
 
 $repo = $PSScriptRoot
@@ -79,7 +81,16 @@ try {
         }
     }
 
-    $excelHash = (Get-FileHash -LiteralPath $sourcePath -Algorithm SHA256).Hash
+    # Permitir a leitura do ficheiro guardado enquanto o Excel permanece aberto.
+    $sourceStream = [System.IO.File]::Open($sourcePath, 'Open', 'Read', 'ReadWrite')
+    $sourceHasher = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $excelHash = ([BitConverter]::ToString($sourceHasher.ComputeHash($sourceStream))).Replace('-', '')
+    }
+    finally {
+        $sourceStream.Dispose()
+        $sourceHasher.Dispose()
+    }
     $vacationHash = if ($previousState) { [string]$previousState.vacationHash } else { '' }
     try {
         $vacationHash = Get-RemoteContentHash -Uri $vacationUrl
@@ -88,7 +99,7 @@ try {
         Write-UpdateLog 'Aviso: não foi possível verificar o plano de férias online; será usado o último estado conhecido.'
     }
 
-    if ($previousState -and
+    if (-not $Force -and $previousState -and
         $excelHash -eq [string]$previousState.excelHash -and
         $vacationHash -eq [string]$previousState.vacationHash) {
         Write-UpdateLog 'Fontes sem alterações; reconstrução ignorada.'
@@ -114,7 +125,7 @@ try {
         checkedAt = (Get-Date).ToString('o')
     }
 
-    $gitBase = @('-c', "safe.directory=$gitSafeDirectory")
+    $gitBase = @('-C', $repo, '-c', "safe.directory=$gitSafeDirectory")
     & $gitExecutable @gitBase diff --quiet -- index.html
     $diffExitCode = $LASTEXITCODE
 
